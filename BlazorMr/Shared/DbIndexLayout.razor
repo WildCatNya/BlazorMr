@@ -1,0 +1,21 @@
+﻿@typeparam TItem
+
+<table class="table table-striped">
+    <thead>
+        <tr>@TableHeader</tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Items)
+        {
+            <tr class="align-middle">@RowTemplate(item)</tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    [Parameter] public RenderFragment TableHeader { get; set; }
+
+    [Parameter] public RenderFragment<TItem> RowTemplate { get; set; }
+
+    [Parameter] public List<TItem> Items { get; set; }
+}

@@ -1,0 +1,46 @@
+﻿@page "/author"
+@using BlazorMr.Data.DbModels
+@using Microsoft.EntityFrameworkCore
+
+@if (Authors is null)
+{
+    <p><em>Загрузка...</em></p>
+}
+else if (Authors.Count == 0)
+{
+    <p><em>Данных нет.</em></p>
+    <p>
+        <a href="/author/add" class="btn btn-primary mb-4">Добавить</a>
+    </p>
+}
+else
+{
+    <a href="/author/add" class="btn btn-primary mb-4">Добавить</a>
+    <DbIndexLayout Items="@Authors">
+        <TableHeader>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Actions</th>
+        </TableHeader>
+        <RowTemplate Context="author">
+            <td>@author.Id</td>
+            <td>
+                <a href="@author.Href">@author.Name</a>
+            </td>
+            <td>
+                <ActionButtons PagePath="author" ModelId="@author.Id" />
+            </td>
+        </RowTemplate>
+    </DbIndexLayout>
+}
+
+@code {
+    private List<Author> Authors;
+
+    private MediaContext _context = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Authors = await _context.Authors.ToListAsync();
+    }
+}

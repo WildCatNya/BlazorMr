@@ -1,0 +1,132 @@
+﻿@page "/preview"
+
+@using BlazorMr.Data.DbModels
+@using Microsoft.EntityFrameworkCore
+
+@inject IJSRuntime JsRuntime
+@inject NavigationManager NavigationManager
+
+@if (Videos is null)
+{
+    <p><em>Загрузка...</em></p>
+}
+else if (Videos.Count == 0)
+{
+    <p><em>Данных нет</em></p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th colspan="4">
+                    <div class="text-center">
+                        <button class="btn btn-warning me-2" @onclick="DownloadAll">Скачать все</button>
+                        <button class="btn btn-warning me-2" @onclick="UpdateAll">Обновить все</button>
+                        <button class="btn btn-warning" @onclick="DeleteAll">Удалить все</button>
+                    </div>
+                </th>
+            </tr>
+            <tr>
+                <th>Id</th>
+                <th>Video Title</th>
+                <th>Has Preview</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var video in Videos.OrderBy(x => PreviewManager.HasPreview(x)))
+            {
+                bool previewExist = PreviewManager.HasPreview(video);
+
+                <tr class="align-middle">
+                    <td>@video.Id</td>
+                    <td>@video.Title</td>
+                    <td>
+                        <ImageLayout Access="previewExist" />
+                    </td>
+                    <td>
+                        @if (previewExist)
+                        {
+                            <button class="btn btn-danger" @onclick="() => Delete(video)">Удалить</button>
+                        }
+                        else
+                        {
+                            <button class="btn btn-success" @onclick="() => Download(video)">Скачать</button>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private MediaContext _context = new();
+
+    private readonly PreviewManager PreviewManager = new();
+
+    private List<Video>? Videos;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Videos = await _context.Videos.ToListAsync();
+    }
+
+    private async Task Delete(Video video)
+    {
+        bool confirmed = await JsRuntime.InvokeAsync<bool>("confirm", "Удалить превью?");
+        if (confirmed)
+        {
+            PreviewManager.Delete(video);
+            NavigationManager.NavigateTo("preview");
+        }
+    }
+    private async Task Download(Video video)
+    {
+        bool confirmed = await JsRuntime.InvokeAsync<bool>("confirm", "Скачать превью?");
+        if (confirmed)
+        {
+            PreviewManager.Download(video);
+            NavigationManager.NavigateTo("preview");
+        }
+    }
+    private async Task DownloadAll()
+    {
+        bool confirmed = await JsRuntime.InvokeAsync<bool>("confirm", "Скачать все нескачанные превьюшки? Это может занять некоторое время");
+        if (confirmed)
+        {
+            foreach (var video in Videos.Where(x => !PreviewManager.HasPreview(x)))
+            {
+                PreviewManager.Download(video);
+                Task.Delay(1000);
+            }
+            await JsRuntime.InvokeVoidAsync("alert", "Скачивание закончено");
+            NavigationManager.NavigateTo("preview");
+        }
+    }
+    private async Task UpdateAll()
+    {
+        bool confirmed = await JsRuntime.InvokeAsync<bool>("confirm", "Обновить все превьюшки?");
+        if (confirmed)
+        {
+            foreach (var video in Videos)
+            {
+                PreviewManager.Download(video);
+            }
+            NavigationManager.NavigateTo("preview");
+        }
+    }
+    private async Task DeleteAll()
+    {
+        bool confirmed = await JsRuntime.InvokeAsync<bool>("confirm", "Удалить все превьюшки?");
+        if (confirmed)
+        {
+            foreach (var video in Videos)
+            {
+                PreviewManager.Delete(video);
+            }
+            NavigationManager.NavigateTo("preview");
+        }
+    }
+}

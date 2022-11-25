@@ -1,0 +1,61 @@
+﻿@page "/author/add"
+@page "/author/edit/{AuthorId:int}"
+@using BlazorMr.Data.DbModels
+@using Microsoft.EntityFrameworkCore
+
+@inject NavigationManager NavigationManager
+
+<EditForm Model="@Author" OnValidSubmit="Save">
+    <DataAnnotationsValidator />
+    <div class="form-group">
+        <label>Name: </label>
+        <div>
+            <InputText @bind-Value="@Author.Name" />
+            <ValidationMessage For="@(() => Author.Name)" />
+        </div>
+    </div>
+    <div class="form-group mt-3">
+        <label>Href: </label>
+        <div>
+            <InputText @bind-Value="@Author.Href" />
+            <ValidationMessage For="@(() => Author.Href)" />
+        </div>
+    </div>
+    <div class="form-group mt-3">
+        <button class="btn btn-primary" type="submit">
+            @ButtonText
+        </button>
+        <a href="/author" class="btn btn-secondary">Назад</a>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter] public int AuthorId { get; set; }
+
+    private MediaContext _context = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (AuthorId != 0)
+        {
+            Author = _context.Authors.ToList().FirstOrDefault(x => x.Id == AuthorId);
+            ButtonText = "Edit";
+        }
+    }
+    private Author Author = new();
+    private string ButtonText = "Create";
+
+    private async Task Save()
+    {
+        if (AuthorId == 0)
+        {
+            _context.Authors.Add(Author);
+        }
+        else
+        {
+            _context.Entry(Author).State = EntityState.Modified;
+        }
+        await _context.SaveChangesAsync();
+        NavigationManager.NavigateTo("author");
+    }
+}

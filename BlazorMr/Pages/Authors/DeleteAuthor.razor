@@ -1,0 +1,35 @@
+﻿@page "/author/delete/{AuthorId:int}"
+@using BlazorMr.Data.DbModels
+@using Microsoft.EntityFrameworkCore
+
+@inject NavigationManager NavigationManager
+
+<h3>Удалить?</h3>
+
+<EditForm Model="@Author" OnValidSubmit="Delete">
+    <p>Name: <strong>@Author.Name</strong></p>
+    <p>Href: <strong>@Author.Href</strong></p>
+
+    <button type="submit" class="btn btn-danger">Удалить</button>
+    <a href="/author" class="btn btn-secondary">Назад</a>
+</EditForm>
+
+@code {
+    [Parameter] public int AuthorId { get; set; }
+
+    private MediaContext _context = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Author = _context.Authors.ToList().FirstOrDefault(x => x.Id == AuthorId);
+    }
+
+    private Author Author = new();
+
+    private async Task Delete()
+    {
+        _context.Authors.Remove(Author);
+        await _context.SaveChangesAsync();
+        NavigationManager.NavigateTo("author");
+    }
+}

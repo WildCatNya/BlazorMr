@@ -1,0 +1,17 @@
+﻿<ul class="list-group list-group-horizontal">
+    <li class="list-group-item">
+        <a href="/@PagePath/edit/@ModelId" class="btn btn-warning">
+            <span class="oi oi-pencil"></span>
+        </a>
+    </li>
+    <li class="list-group-item ms-4">
+        <a href="/@PagePath/delete/@ModelId" class="btn btn-danger">
+            <span class="oi oi-trash"></span>
+        </a>
+    </li>
+</ul>
+
+@code {
+    [Parameter] public string PagePath { get; set; }
+    [Parameter] public int ModelId { get; set; }
+}

@@ -1,0 +1,54 @@
+﻿@page "/video"
+@using BlazorMr.Data.DbModels
+@using Microsoft.EntityFrameworkCore
+
+@if (Videos is null)
+{
+    <p><em>Загрузка...</em></p>
+}
+else if (Videos.Count == 0)
+{
+    <p><em>Данных нет</em></p>
+    <p>
+        <a href="/video/add" class="btn btn-primary mb-4">Добавить</a>
+    </p>
+}
+else
+{
+    <a href="/video/add" class="btn btn-primary mb-4">Добавить</a>
+    <DbIndexLayout Items="@Videos">
+        <TableHeader>
+            <th>Id</th>
+            <th>Author</th>
+            <th>Title</th>
+            <th>Incognito Access</th>
+            <th>Actions</th>
+        </TableHeader>
+        <RowTemplate Context="video">
+            <td>@video.Id</td>
+            <td>
+                <a href="@video.IdAuthorNavigation.Href">@video.IdAuthorNavigation.Name</a>
+            </td>
+            <td>
+                <a href="@video.Href">@video.Title</a>
+            </td>
+            <td>
+                <ImageLayout Access="@video.IncognitoAccess" />
+            </td>
+            <td>
+                <ActionButtons PagePath="video" ModelId="@video.Id" />
+            </td>
+        </RowTemplate>
+    </DbIndexLayout>
+}
+
+@code {
+    private MediaContext _context = new();
+
+    private List<Video>? Videos;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Videos = await _context.Videos.Include(x => x.IdAuthorNavigation).ToListAsync();
+    }
+}

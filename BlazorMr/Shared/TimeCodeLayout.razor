@@ -1,0 +1,26 @@
+﻿@using BlazorMr.Data.DbModels
+
+@foreach (var timecode in TimeCodes.OrderBy(x => x.Start))
+{
+    <div class="row collapse @(LastTimeCode == timecode ? string.Empty : "mb-2")" id="collapse@(timecode.IdVideo)">
+        <div class="col-sm-2 text-center border-end border-dark">@timecode.Id</div>
+        <div class="col-sm-2 text-center">
+            <TimeCodeHrefLayout TimeCode="@timecode" IsStart="true" />
+        </div>
+        <div class="col-sm-1 text-center">-</div>
+        <div class="col-sm-2 text-center">
+            <TimeCodeHrefLayout TimeCode="@timecode" IsStart="false" />
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public ICollection<TimeCode> TimeCodes { get; set; }
+
+    private TimeCode LastTimeCode;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        LastTimeCode = TimeCodes.OrderBy(x => x.Start).Last();
+    }
+}

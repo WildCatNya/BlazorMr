@@ -1,0 +1,10 @@
+﻿@using BlazorMr.Data.DbModels
+
+<a href="@(TimeCode.IdVideoNavigation.Href + $"?t={(IsStart ? TimeCode.Start : TimeCode.End)}")" target="_blank">
+    @(IsStart ? TimeCode.StartModified : TimeCode.EndModified)
+</a>
+
+@code {
+    [Parameter] public TimeCode TimeCode { get; set; }
+    [Parameter] public bool IsStart { get; set; }
+}

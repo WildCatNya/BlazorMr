@@ -1,0 +1,56 @@
+﻿@page "/"
+
+@inject IJSRuntime JsRuntime
+
+@using BlazorMr.Data.DbModels
+@using Microsoft.EntityFrameworkCore
+
+@if (Videos is null)
+{
+    <p><em>Загрузка данных...</em></p>
+}
+else if (Videos.Count == 0)
+{
+    <p><em>Данных нет</em></p>
+}
+else
+{
+    <select class="mb-3" @onchange="OnChange">
+        <option value="0">Все (@Videos.Count)</option>
+        @foreach (var author in Authors.OrderBy(x => x.Name))
+        {
+            <option value="@author.Id">@author.Name (@author.Videos.Count)</option>
+        }
+    </select>
+
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        @foreach (var video in Videos)
+        {
+            <div class="col">
+                <CardLayout Video="@video" />
+            </div>
+        }
+    </div>
+}
+
+@code {
+    private MediaContext _context = new();
+    private List<Video>? Videos;
+    private List<Author>? Authors;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Videos = await _context.Videos.Include(x => x.TimeCodes).Include(x => x.IdAuthorNavigation).ToListAsync();
+        Authors = await _context.Authors.ToListAsync();
+    }
+    private void OnChange(ChangeEventArgs e)
+    {
+        int id = e.Value.ToString().ToInt32();
+        if (id == 0)
+        {
+            Videos = _context.Videos.Include(x => x.TimeCodes).Include(x => x.IdAuthorNavigation).ToList();
+            return;
+        }
+        Videos = _context.Videos.Include(x => x.TimeCodes).Include(x => x.IdAuthorNavigation).ToList().Where(x => x.IdAuthor == id).ToList();
+    }
+}

@@ -1,0 +1,85 @@
+﻿@page "/video/add"
+@page "/video/edit/{VideoId:int}"
+@using BlazorMr.Data.DbModels
+@using Microsoft.EntityFrameworkCore
+
+@inject NavigationManager NavigationManager
+
+<EditForm Model="@Video" OnValidSubmit="Save">
+    <DataAnnotationsValidator />
+    <div class="form-group">
+        <label>Author: </label>
+        <div>
+            <InputSelect @bind-Value="@Video.IdAuthor">
+                <option value="0">---</option>
+                @foreach (var author in Authors)
+                {
+                    <option value="@author.Id">@author.Name</option>
+                }
+            </InputSelect>
+        </div>
+    </div>
+    <div class="form-group mt-3">
+        <label>Name: </label>
+        <div>
+            <InputText @bind-Value="@Video.Title" />
+            <ValidationMessage For="@(() => Video.Title)" />
+        </div>
+    </div>
+    <div class="form-group mt-3">
+        <label>Href: </label>
+        <div>
+            <InputText @bind-Value="@Video.Href" />
+            <ValidationMessage For="@(() => Video.Href)" />
+        </div>
+    </div>
+    <div class="form-group mt-3">
+        <label>Incognito Access: </label>
+        <div>
+            <InputCheckbox @bind-Value="@Video.IncognitoAccess" />
+            <ValidationMessage For="@(() => Video.Title)" />
+        </div>
+    </div>
+    <div class="form-group mt-3">
+        <button class="btn btn-primary" type="submit">
+            @ButtonText
+        </button>
+        <a href="/video" class="btn btn-secondary">Назад</a>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter] public int VideoId { get; set; }
+
+    private MediaContext _context = new();
+
+    private Video Video = new();
+
+    private List<Author> Authors;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (VideoId != 0)
+        {
+            Video = _context.Videos.ToList().FirstOrDefault(x => x.Id == VideoId);
+            ButtonText = "Edit";
+        }
+        Authors = _context.Authors.ToList();
+    }
+
+    private string ButtonText = "Create";
+
+    private async Task Save()
+    {
+        if (VideoId == 0)
+        {
+            _context.Videos.Add(Video);
+        }
+        else
+        {
+            _context.Entry(Video).State = EntityState.Modified;
+        }
+        await _context.SaveChangesAsync();
+        NavigationManager.NavigateTo("video");
+    }
+}
