@@ -36,8 +36,6 @@
 
     private Video Video = new();
 
-    private PreviewManager PreviewManager = new();
-
     protected override async Task OnInitializedAsync()
     {
         Video = _context.Videos.Include(x => x.TimeCodes).ToList().FirstOrDefault(x => x.Id == VideoId);

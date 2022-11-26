@@ -3,14 +3,14 @@ using System.Net;
 
 namespace BlazorMr;
 
-public class PreviewManager
+public static class PreviewManager
 {
-    private readonly string _basePath;
-    public PreviewManager()
+    private static readonly string _basePath;
+    static PreviewManager()
     {
         _basePath = @"wwwroot\images\video-previews";
     }
-    public void Download(Video video)
+    public static void Download(Video video)
     {
         //default.jpg 120x90
         using (WebClient client = new())
@@ -42,7 +42,7 @@ public class PreviewManager
             }
         }
     }
-    public void Delete(Video video)
+    public static void Delete(Video video)
     {
         FileInfo file = new($@"{_basePath}\{video.Id}.jpg");
         if (file.Exists)
@@ -50,7 +50,7 @@ public class PreviewManager
             file.Delete();
         }
     }
-    public bool HasPreview(Video video)
+    public static bool HasPreview(Video video)
     {
         FileInfo file = new($@"{_basePath}\{video.Id}.jpg");
         return file.Exists;

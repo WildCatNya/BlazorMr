@@ -63,8 +63,6 @@ else
 @code {
     private MediaContext _context = new();
 
-    private readonly PreviewManager PreviewManager = new();
-
     private List<Video>? Videos;
 
     protected override async Task OnInitializedAsync()
@@ -98,7 +96,7 @@ else
             foreach (var video in Videos.Where(x => !PreviewManager.HasPreview(x)))
             {
                 PreviewManager.Download(video);
-                Task.Delay(1000);
+                await Task.Delay(1000);
             }
             await JsRuntime.InvokeVoidAsync("alert", "Скачивание закончено");
             NavigationManager.NavigateTo("preview");

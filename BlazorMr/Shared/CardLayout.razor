@@ -22,7 +22,7 @@
             }
         </div>
     </div>
-    @if (Manager.HasPreview(Video))
+    @if (PreviewManager.HasPreview(Video))
     {
         <img src="/images/video-previews/@(Video.Id).jpg" class="card-img-top">
     }
@@ -41,6 +41,4 @@
 
 @code {
     [Parameter] public Video Video { get; set; }
-
-    private PreviewManager Manager = new();
 }
