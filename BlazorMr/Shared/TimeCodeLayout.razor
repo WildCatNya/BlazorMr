@@ -1,6 +1,4 @@
-﻿@using BlazorMr.Data.DbModels
-
-@foreach (var timecode in TimeCodes.OrderBy(x => x.Start))
+﻿@foreach (var timecode in TimeCodes.OrderBy(x => x.Start))
 {
     <div class="row collapse @(LastTimeCode == timecode ? string.Empty : "mb-2")" id="collapse@(timecode.IdVideo)">
         <div class="col-sm-2 text-center border-end border-dark">@timecode.Id</div>

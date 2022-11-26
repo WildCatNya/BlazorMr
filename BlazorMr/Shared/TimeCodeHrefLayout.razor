@@ -1,6 +1,4 @@
-﻿@using BlazorMr.Data.DbModels
-
-<a href="@(TimeCode.IdVideoNavigation.Href + $"?t={(IsStart ? TimeCode.Start : TimeCode.End)}")" target="_blank">
+﻿<a href="@(TimeCode.IdVideoNavigation.Href + $"?t={(IsStart ? TimeCode.Start : TimeCode.End)}")" target="_blank">
     @(IsStart ? TimeCode.StartModified : TimeCode.EndModified)
 </a>
 
