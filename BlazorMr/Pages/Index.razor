@@ -15,7 +15,7 @@ else if (Videos.Count == 0)
 else
 {
     <select class="mb-3" @onchange="OnChange">
-        <option value="0">Все (@Videos.Count)</option>
+        <option value="0">Все (@Authors.Sum(x => x.Videos.Count))</option>
         @foreach (var author in Authors.OrderBy(x => x.Name))
         {
             <option value="@author.Id">@author.Name (@author.Videos.Count)</option>
