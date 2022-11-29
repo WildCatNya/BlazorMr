@@ -22,9 +22,16 @@
             }
         </div>
     </div>
-    @if (PreviewManager.HasPreview(Video))
+    @if (IsLocalImage)
     {
-        <img src="/images/video-previews/@(Video.Id).jpg" class="card-img-top">
+        if (PreviewManager.HasPreview(Video))
+        {
+            <img src="/images/video-previews/@(Video.Id).jpg" class="card-img-top">
+        }
+    }
+    else
+    {
+        <img src="@PreviewManager.GetHrefByRes(Video, Resolution)" class="card-img-top">
     }
     <div class="card-body">
         <a href="@Video.Href" target="_blank">
@@ -41,4 +48,6 @@
 
 @code {
     [Parameter] public Video Video { get; set; }
+    [Parameter] public bool IsLocalImage { get; set; } = true;
+    [Parameter] public PreviewResolution Resolution { get; set; }
 }
