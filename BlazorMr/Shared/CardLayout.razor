@@ -5,9 +5,16 @@
         <div class="row">
             <div class="col-2 text-center align-self-center border-end border-dark">@Video.Id</div>
             <div class="col-6 border-end border-dark text-center align-self-center">
-                <a href="@Video.IdAuthorNavigation.Href" target="_blank">
-                    @Video.IdAuthorNavigation.Name
-                </a>
+                @if (Resolution.HasValue)
+                {
+                    <span>@Resolution.GetAttributeName()</span>
+                }
+                else
+                {
+                    <a href="@Video.IdAuthorNavigation.Href" target="_blank">
+                        @Video.IdAuthorNavigation.Name
+                    </a>
+                }
             </div>
             <div class="@(Video.TimeCodes.Count > 0 ? "col-2 border-end border-dark" : "col-4") text-center align-self-center">
                 <ImageLayout Access="@Video.IncognitoAccess" />
@@ -22,16 +29,13 @@
             }
         </div>
     </div>
-    @if (IsLocalImage)
+    @if (Resolution.HasValue)
     {
-        if (PreviewManager.HasPreview(Video))
-        {
-            <img src="/images/video-previews/@(Video.Id).jpg" class="card-img-top">
-        }
+        <img src="@PreviewManager.GetHrefByRes(Video, Resolution.Value)" class="card-img-top">
     }
-    else
+    else if (PreviewManager.HasPreview(Video))
     {
-        <img src="@PreviewManager.GetHrefByRes(Video, Resolution)" class="card-img-top">
+        <img src="/images/video-previews/@(Video.Id).jpg" class="card-img-top">
     }
     <div class="card-body">
         <a href="@Video.Href" target="_blank">
@@ -48,6 +52,5 @@
 
 @code {
     [Parameter] public Video Video { get; set; }
-    [Parameter] public bool IsLocalImage { get; set; } = true;
-    [Parameter] public PreviewResolution Resolution { get; set; }
+    [Parameter] public PreviewResolution? Resolution { get; set; }
 }

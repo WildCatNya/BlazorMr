@@ -1,0 +1,26 @@
+﻿@page "/resolution/{VideoId:int}"
+
+@using Microsoft.EntityFrameworkCore;
+
+<div class="row row-cols-1 row-cols-md-3 g-4">
+    @foreach (PreviewResolution res in Enum.GetValues(typeof(PreviewResolution)))
+    {
+        <div class="col">
+            <CardLayout Video="@Video" Resolution="@res" />
+        </div>
+
+    }
+</div>
+
+@code {
+    [Parameter] public int VideoId { get; set; }
+
+    MediaContext _context = new();
+
+    private Video? Video;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        Video = _context.Videos.Include(x => x.IdAuthorNavigation).Include(x => x.TimeCodes).FirstOrDefault(x => x.Id == VideoId);
+    }
+}
