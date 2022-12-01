@@ -3,29 +3,29 @@
 <div class="card h-100">
     <div class="card-header">
         <div class="row">
-            <div class="col-2 text-center align-self-center border-end border-dark">@Video.Id</div>
-            <div class="col-6 border-end border-dark text-center align-self-center">
-                @if (Resolution.HasValue)
-                {
-                    <span>@Resolution.GetAttributeName()</span>
-                }
-                else
-                {
+            @if (!Resolution.HasValue)
+            {
+                <div class="col-2 text-center align-self-center border-end border-dark">@Video.Id</div>
+                <div class="col-6 border-end border-dark text-center align-self-center">
                     <a href="@Video.IdAuthorNavigation.Href" target="_blank">
                         @Video.IdAuthorNavigation.Name
                     </a>
-                }
-            </div>
-            <div class="@(Video.TimeCodes.Count > 0 ? "col-2 border-end border-dark" : "col-4") text-center align-self-center">
-                <ImageLayout Access="@Video.IncognitoAccess" />
-            </div>
-            @if (Video.TimeCodes.Count > 0)
-            {
-                <div class="col-2 text-center align-self-center">
-                    <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapse@(Video.Id)" aria-expanded="false" aria-controls="collapse@(Video.Id)">
-                        <span class="oi oi-list"></span>
-                    </button>
                 </div>
+                <div class="@(Video.TimeCodes.Count > 0 ? "col-2 border-end border-dark" : "col-4") text-center align-self-center">
+                    <ImageLayout Access="@Video.IncognitoAccess" />
+                </div>
+                @if (Video.TimeCodes.Count > 0)
+                {
+                    <div class="col-2 text-center align-self-center">
+                        <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapse@(Video.Id)" aria-expanded="false" aria-controls="collapse@(Video.Id)">
+                            <span class="oi oi-list"></span>
+                        </button>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="col text-center align-self-center">@Resolution.GetAttributeName()</div>
             }
         </div>
     </div>
@@ -42,7 +42,7 @@
             <span class="card-text">@Video.Title</span>
         </a>
     </div>
-    @if (Video.TimeCodes.Count > 0)
+    @if (Video.TimeCodes.Count > 0 && !Resolution.HasValue)
     {
         <div class="card-footer">
             <TimeCodeLayout TimeCodes="@Video.TimeCodes" />
