@@ -22,16 +22,13 @@ public partial class MediaContext : DbContext
     public virtual DbSet<Video> Videos { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseSqlServer("Server=.\\SQLEXPRESS;Database=Media;TrustServerCertificate=True;Trusted_Connection=True;");
+        => optionsBuilder.UseSqlite("Data source=Media.db");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Author>(entity =>
         {
             entity.ToTable("Author");
-
-            entity.Property(e => e.Href).HasMaxLength(60);
-            entity.Property(e => e.Name).HasMaxLength(60);
         });
 
         modelBuilder.Entity<TimeCode>(entity =>
@@ -40,21 +37,16 @@ public partial class MediaContext : DbContext
 
             entity.HasOne(d => d.IdVideoNavigation).WithMany(p => p.TimeCodes)
                 .HasForeignKey(d => d.IdVideo)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_TimeCode_Video");
+                .OnDelete(DeleteBehavior.ClientSetNull);
         });
 
         modelBuilder.Entity<Video>(entity =>
         {
             entity.ToTable("Video");
 
-            entity.Property(e => e.Href).HasMaxLength(60);
-            entity.Property(e => e.Title).HasMaxLength(250);
-
             entity.HasOne(d => d.IdAuthorNavigation).WithMany(p => p.Videos)
                 .HasForeignKey(d => d.IdAuthor)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Video_Author");
+                .OnDelete(DeleteBehavior.ClientSetNull);
         });
 
         OnModelCreatingPartial(modelBuilder);
