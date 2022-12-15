@@ -1,6 +1,6 @@
 ﻿@foreach (var timecode in TimeCodes.OrderBy(x => x.Start))
 {
-    <div class="row collapse @(LastTimeCode == timecode ? string.Empty : "mb-2")" id="collapse@(timecode.IdVideo)">
+    <div class="row collapse" id="collapse@(timecode.IdVideo)">
         <div class="col-sm-2 text-center border-end border-dark">@timecode.Id</div>
         <div class="col-sm-2 text-center">
             <TimeCodeHrefLayout TimeCode="@timecode" IsStart="true" />
@@ -11,6 +11,13 @@
         </div>
     </div>
 }
+<div class="row collapse" id="collapse@(LastTimeCode.IdVideo)">
+    <div class="col text-end align-self-end">
+        <a class="btn btn-warning" href="/timecode/add/@(LastTimeCode.IdVideo)" target="_blank">
+            <span class="oi oi-plus"></span>
+        </a>
+    </div>
+</div>
 
 @code {
     [Parameter] public ICollection<TimeCode> TimeCodes { get; set; }

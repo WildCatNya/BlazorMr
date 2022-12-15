@@ -1,5 +1,6 @@
 ﻿@page "/timecode/add"
 @page "/timecode/edit/{TimeCodeId:int}"
+@page "/timecode/add/{VideoId:int}"
 
 @using Microsoft.EntityFrameworkCore
 
@@ -45,6 +46,8 @@
 @code {
     [Parameter] public int TimeCodeId { get; set; }
 
+    [Parameter] public int VideoId { get; set; }
+
     private MediaContext _context = new();
 
     private TimeCode TimeCode = new();
@@ -57,6 +60,10 @@
         {
             TimeCode = _context.TimeCodes.ToList().FirstOrDefault(x => x.Id == TimeCodeId);
             ButtonText = "Edit";
+        }
+        if (VideoId != 0)
+        {
+            TimeCode.IdVideo = VideoId;
         }
         Videos = _context.Videos.ToList();
     }
