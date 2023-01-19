@@ -14,31 +14,20 @@ public static class PreviewManager
     }
     public static void Download(Video video)
     {
-        using (WebClient client = new())
+        using WebClient client = new();
+        try
         {
-            DirectoryInfo directoryInfo = new(_basePath);
-            if (!directoryInfo.Exists)
-            {
-                directoryInfo.Create();
-            }
-            string uniqId = video.Href.Replace("https://youtu.be/", string.Empty);
+            Download(video, PreviewResolution.MaxResDefault);
+        }
+        catch (Exception)
+        {
             try
             {
-                string href = $"http://i1.ytimg.com/vi/{uniqId}/maxresdefault.jpg";
-                client.DownloadFile(href, $@"{_basePath}\{video.Id}.jpg");
+                Download(video, PreviewResolution.MqDefault);
             }
             catch (Exception)
             {
-                try
-                {
-                    string href = $"http://i1.ytimg.com/vi/{uniqId}/mqdefault.jpg";
-                    client.DownloadFile(href, $@"{_basePath}\{video.Id}.jpg");
-                }
-                catch (Exception)
-                {
-                    string href = $"http://i1.ytimg.com/vi/{uniqId}/hqdefault.jpg";
-                    client.DownloadFile(href, $@"{_basePath}\{video.Id}.jpg");
-                }
+                Download(video, PreviewResolution.HqDefault);
             }
         }
     }
@@ -49,10 +38,8 @@ public static class PreviewManager
         {
             directoryInfo.Create();
         }
-        using (WebClient client = new())
-        {
-            client.DownloadFile(GetHrefByRes(video, resolution), $@"{_basePath}\{video.Id}.jpg");
-        }
+        using WebClient client = new();
+        client.DownloadFile(GetHrefByRes(video, resolution), $@"{_basePath}\{video.Id}.jpg");
     }
     public static void Delete(Video video)
     {

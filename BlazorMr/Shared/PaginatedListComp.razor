@@ -1,0 +1,76 @@
+﻿<div class="row row-cols-1 row-cols-md-3 g-4">
+    @foreach (var video in Videos)
+    {
+        <div class="col">
+            <CardLayout Video="@video" />
+        </div>
+    }
+</div>
+
+<div class="btn-group mt-3" role="group">
+    @if (Videos.HasPrevPage)
+    {
+        <button class="btn btn-outline-secondary" @onclick="() => CurrentPageChange(CurrentPageAction.Decrease) ">
+            <span class="oi oi-arrow-left"></span>
+        </button>
+    }
+    @foreach (var pageNum in Enumerable.Range(1, Videos.TotalPages))
+    {
+        @if (pageNum == Videos.CurrentPage)
+        {
+            <span class="btn btn-primary disabled">@pageNum</span>
+        }
+        else
+        {
+            <button type="button" class="btn btn-outline-primary" @onclick="() => CurrentPageChange(pageNum)">@pageNum</button>
+        }
+    }
+    @if (Videos.HasNextPage)
+    {
+        <button class="btn btn-outline-secondary" @onclick="() => CurrentPageChange(CurrentPageAction.Increase) ">
+            <span class="oi oi-arrow-right"></span>
+        </button>
+    }
+</div>
+
+@code {
+    [Parameter] public List<Video> Source { get; set; }
+    [Parameter] public int PageSize { get; set; }
+
+    private PaginatedList<Video> Videos;
+
+    private int CurrentPage = 1;
+
+    protected override void OnParametersSet()
+    {
+        Videos = GetVideos();
+    }
+
+    private void CurrentPageChange(CurrentPageAction action)
+    {
+        if (action == CurrentPageAction.Increase)
+        {
+            CurrentPage++;
+        }
+        if (action == CurrentPageAction.Decrease)
+        {
+            CurrentPage--;
+        }
+
+        Videos = GetVideos();
+    }
+    private void CurrentPageChange(int page)
+    {
+        CurrentPage = page;
+
+        Videos = GetVideos();
+    }
+
+    private PaginatedList<Video> GetVideos() => PaginatedList<Video>.Create(Source, CurrentPage, PageSize);
+
+    private enum CurrentPageAction
+    {
+        Increase,
+        Decrease
+    }
+}

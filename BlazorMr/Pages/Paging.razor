@@ -1,0 +1,30 @@
+﻿@page "/paging"
+
+@using Microsoft.EntityFrameworkCore
+
+@inject IJSRuntime JsRuntime
+@inject NavigationManager NavigationManager
+
+@if (Videos is null)
+{
+    <p><em>Загрузка данных...</em></p>
+}
+else if (Videos.Count == 0)
+{
+    <p><em>Данных нет</em></p>
+}
+else
+{
+    <PaginatedListComp Source="Videos" PageSize="2" />
+}
+
+@code {
+    private MediaContext _context = new();
+
+    private List<Video>? Videos;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Videos = await _context.Videos.Include(x => x.TimeCodes).Include(x => x.IdAuthorNavigation).ToListAsync();
+    }
+}
