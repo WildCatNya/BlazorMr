@@ -15,6 +15,6 @@ public static class Extensions
     }
     public static string? GetAttributeName(this Enum enumValue)
     {
-        return enumValue.GetType().GetMember(enumValue.ToString()).First().GetCustomAttribute<DisplayAttribute>().Name;
+        return enumValue.GetType().GetMember(enumValue.ToString()).First().GetCustomAttribute<DisplayAttribute>()?.Name;
     }
 }

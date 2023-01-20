@@ -7,10 +7,16 @@ public static class PreviewManager
 {
     private static readonly string _basePath;
     private static readonly string _baseHref;
+    private readonly static DirectoryInfo _dirInfo;
     static PreviewManager()
     {
         _basePath = @"wwwroot\images\video-previews";
         _baseHref = "http://i1.ytimg.com/vi";
+        _dirInfo = new(_basePath);
+        if (!_dirInfo.Exists)
+        {
+            _dirInfo.Create();
+        }
     }
     public static void Download(Video video)
     {
@@ -33,11 +39,6 @@ public static class PreviewManager
     }
     public static void Download(Video video, PreviewResolution resolution)
     {
-        DirectoryInfo directoryInfo = new(_basePath);
-        if (!directoryInfo.Exists)
-        {
-            directoryInfo.Create();
-        }
         using WebClient client = new();
         client.DownloadFile(GetHrefByRes(video, resolution), $@"{_basePath}\{video.Id}.jpg");
     }
