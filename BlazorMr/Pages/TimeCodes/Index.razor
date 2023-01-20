@@ -2,6 +2,8 @@
 
 @using Microsoft.EntityFrameworkCore
 
+<a href="/timecode/add" class="btn btn-primary mb-4">Добавить</a>
+
 @if (TimeCodes is null)
 {
     <p><em>Загрузка...</em></p>
@@ -9,31 +11,34 @@
 else if (TimeCodes.Count == 0)
 {
     <p><em>Данных нет</em></p>
-    <p>
-        <a href="/timecode/add" class="btn btn-primary mb-4">Добавить</a>
-    </p>
 }
 else
 {
-    <a href="/timecode/add" class="btn btn-primary mb-4">Добавить</a>
-    <DbIndexLayout Items="@TimeCodes">
-        <TableHeader>
-            <th>Id</th>
-            <th>Id Video</th>
-            <th>Start</th>
-            <th>End</th>
-            <th>Actions</th>
-        </TableHeader>
-        <RowTemplate Context="timecode">
-            <td>@timecode.Id</td>
-            <td>@timecode.IdVideo</td>
-            <td>@timecode.Start</td>
-            <td>@timecode.End</td>
-            <td>
-                <ActionButtons PagePath="timecode" ModelId="@timecode.Id" />
-            </td>
-        </RowTemplate>
-    </DbIndexLayout>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Id Видео</th>
+                <th>Начало</th>
+                <th>Конец</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var timecode in TimeCodes)
+            {
+                <tr class="align-middle">
+                    <td>@timecode.Id</td>
+                    <td>@timecode.IdVideo</td>
+                    <td>@timecode.Start</td>
+                    <td>@timecode.End</td>
+                    <td>
+                        <ActionButtons PagePath="timecode" ModelId="@timecode.Id" />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 }
 
 @code {

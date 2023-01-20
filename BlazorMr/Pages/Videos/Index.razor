@@ -2,6 +2,8 @@
 
 @using Microsoft.EntityFrameworkCore
 
+<a href="/video/add" class="btn btn-primary mb-4">Добавить</a>
+
 @if (Videos is null)
 {
     <p><em>Загрузка...</em></p>
@@ -9,37 +11,40 @@
 else if (Videos.Count == 0)
 {
     <p><em>Данных нет</em></p>
-    <p>
-        <a href="/video/add" class="btn btn-primary mb-4">Добавить</a>
-    </p>
 }
 else
 {
-    <a href="/video/add" class="btn btn-primary mb-4">Добавить</a>
-    <DbIndexLayout Items="@Videos">
-        <TableHeader>
-            <th>Id</th>
-            <th>Author</th>
-            <th>Title</th>
-            <th>Incognito Access</th>
-            <th>Actions</th>
-        </TableHeader>
-        <RowTemplate Context="video">
-            <td>@video.Id</td>
-            <td>
-                <a href="@video.IdAuthorNavigation.Href">@video.IdAuthorNavigation.Name</a>
-            </td>
-            <td>
-                <a href="@video.Href">@video.Title</a>
-            </td>
-            <td>
-                <ImageLayout Access="@video.IncognitoAccess" />
-            </td>
-            <td>
-                <ActionButtons PagePath="video" ModelId="@video.Id" />
-            </td>
-        </RowTemplate>
-    </DbIndexLayout>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Автор</th>
+                <th>Название</th>
+                <th>Доступ в инкогнито</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var video in Videos)
+            {
+                <tr class="align-middle">
+                    <td>@video.Id</td>
+                    <td>
+                        <a href="@video.IdAuthorNavigation.Href">@video.IdAuthorNavigation.Name</a>
+                    </td>
+                    <td>
+                        <a href="@video.Href">@video.Title</a>
+                    </td>
+                    <td>
+                        <ImageLayout Access="@video.IncognitoAccess" />
+                    </td>
+                    <td>
+                        <ActionButtons PagePath="video" ModelId="@video.Id" />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 }
 
 @code {
