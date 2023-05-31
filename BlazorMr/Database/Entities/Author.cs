@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using BlazorMr.Database.Entities.Common;
 
-namespace BlazorMr.Data.DbModels;
+namespace BlazorMr.Database.Entities;
 
-public partial class Author
+public class Author : Entity
 {
-    public int Id { get; set; }
-
     public string Name { get; set; } = null!;
 
     public string Href { get; set; } = null!;

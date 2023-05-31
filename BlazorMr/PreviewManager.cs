@@ -1,4 +1,4 @@
-﻿using BlazorMr.Data.DbModels;
+﻿using BlazorMr.Database.Entities;
 using System.Net;
 
 namespace BlazorMr;

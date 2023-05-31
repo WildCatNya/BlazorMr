@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using BlazorMr.Database.Entities.Common;
 
-namespace BlazorMr.Data.DbModels;
+namespace BlazorMr.Database.Entities;
 
-public partial class Video
+public class Video : Entity
 {
-    public int Id { get; set; }
-
     public int IdAuthor { get; set; }
 
     public string Title { get; set; } = null!;

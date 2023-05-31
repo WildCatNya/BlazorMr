@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using BlazorMr.Database.Entities.Common;
 
-namespace BlazorMr.Data.DbModels;
+namespace BlazorMr.Database.Entities;
 
-public partial class TimeCode
+public class TimeCode : Entity
 {
-    public int Id { get; set; }
-
     public int IdVideo { get; set; }
 
     public short Start { get; set; }

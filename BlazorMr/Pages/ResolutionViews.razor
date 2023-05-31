@@ -1,6 +1,7 @@
 ﻿@page "/resolution/{VideoId:int}"
 
 @using Microsoft.EntityFrameworkCore;
+    using BlazorMr.Database;
 
 <div class="row row-cols-1 row-cols-md-3 g-4">
     @foreach (PreviewResolution res in Enum.GetValues(typeof(PreviewResolution)))
