@@ -2,6 +2,8 @@
 
 @using Microsoft.EntityFrameworkCore
 
+@inject IDbContextFactory<MediaContext> DbFactory
+
 <a href="/author/add" class="btn btn-primary mb-4">Добавить</a>
 
 @if (Authors is null)
@@ -42,10 +44,12 @@ else
 @code {
     private List<Author> Authors;
 
-    private MediaContext _context = new();
+    private MediaContext _context;
 
     protected override async Task OnInitializedAsync()
     {
+        _context = await DbFactory.CreateDbContextAsync();
+
         Authors = await _context.Authors.ToListAsync();
     }
 }

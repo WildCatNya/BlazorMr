@@ -2,6 +2,7 @@
 
 @using Microsoft.EntityFrameworkCore
 
+@inject IDbContextFactory<MediaContext> DbFactory
 @inject IJSRuntime JsRuntime
 
 @if (Videos is null)
@@ -33,12 +34,14 @@ else
 }
 
 @code {
-    private MediaContext _context = new();
+    private MediaContext _context;
     private List<Video>? Videos;
     private List<Author>? Authors;
 
     protected override async Task OnInitializedAsync()
     {
+        _context = await DbFactory.CreateDbContextAsync();
+
         Videos = await _context.Videos.Include(x => x.TimeCodes).Include(x => x.IdAuthorNavigation).ToListAsync();
         Authors = await _context.Authors.ToListAsync();
     }

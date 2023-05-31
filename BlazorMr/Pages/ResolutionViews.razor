@@ -1,7 +1,8 @@
 ﻿@page "/resolution/{VideoId:int}"
 
-@using Microsoft.EntityFrameworkCore;
-    using BlazorMr.Database;
+@using Microsoft.EntityFrameworkCore
+
+@inject IDbContextFactory<MediaContext> DbFactory
 
 <div class="row row-cols-1 row-cols-md-3 g-4">
     @foreach (PreviewResolution res in Enum.GetValues(typeof(PreviewResolution)))
@@ -15,12 +16,14 @@
 @code {
     [Parameter] public int VideoId { get; set; }
 
-    MediaContext _context = new();
+    MediaContext _context;
 
     private Video? Video;
 
     protected override async Task OnParametersSetAsync()
     {
+        _context = await DbFactory.CreateDbContextAsync();
+
         Video = _context.Videos.Include(x => x.IdAuthorNavigation).Include(x => x.TimeCodes).FirstOrDefault(x => x.Id == VideoId);
     }
 }

@@ -13,7 +13,7 @@ public class Program
         builder.Services.AddRazorPages();
         builder.Services.AddServerSideBlazor();
 
-        builder.Services.AddDbContext<MediaContext>(
+        builder.Services.AddDbContextFactory<MediaContext>(
             options => options.UseSqlServer(
                 builder.Configuration.GetConnectionString(MediaContext.ConnectionStringName)));
 
