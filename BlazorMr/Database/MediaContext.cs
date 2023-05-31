@@ -1,5 +1,6 @@
 ﻿using BlazorMr.Database.Entities;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 
 namespace BlazorMr.Database;
 
@@ -21,5 +22,5 @@ public partial class MediaContext : DbContext
         => optionsBuilder.UseSqlServer("Server=.\\SQLEXPRESS;Database=Media;TrustServerCertificate=True;Trusted_Connection=True;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
-        => modelBuilder.ApplyConfigurationsFromAssembly(AssemblyReference.Assembly);
+        => modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 }
