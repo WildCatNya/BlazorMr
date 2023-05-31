@@ -8,7 +8,10 @@ public partial class MediaContext : DbContext
 {
     public const string ConnectionStringName = "MediaConnection";
 
-    public MediaContext(DbContextOptions<MediaContext> options) : base(options) { }
+    public MediaContext(DbContextOptions<MediaContext> options) : base(options)
+    {
+        Database.EnsureCreated();
+    }
 
     public virtual DbSet<Author> Authors { get; set; }
 
