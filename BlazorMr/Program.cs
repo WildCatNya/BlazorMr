@@ -1,4 +1,5 @@
 using BlazorMr.Database;
+using BlazorMr.Preview;
 using Microsoft.EntityFrameworkCore;
 
 namespace BlazorMr;
@@ -16,6 +17,8 @@ public class Program
         builder.Services.AddDbContextFactory<MediaContext>(
             options => options.UseSqlServer(
                 builder.Configuration.GetConnectionString(MediaContext.ConnectionStringName)));
+
+        builder.Services.AddScoped<IPreviewManager, PreviewManager>();
 
         var app = builder.Build();
 

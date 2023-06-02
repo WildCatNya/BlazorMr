@@ -1,8 +1,9 @@
 ﻿@page "/preview"
 
-@using Microsoft.EntityFrameworkCore
+@    using Microsoft.EntityFrameworkCore
 
 @inject IDbContextFactory<MediaContext> DbFactory
+@inject IPreviewManager PreviewManager
 @inject IJSRuntime JsRuntime
 @inject NavigationManager NavigationManager
 
@@ -79,6 +80,7 @@ else
 
 @code {
     private MediaContext _context;
+    //private PreviewManager PreviewManager;
 
     private List<Video>? Videos;
 

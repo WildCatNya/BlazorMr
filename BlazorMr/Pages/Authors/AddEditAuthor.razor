@@ -41,7 +41,7 @@
 
         if (AuthorId != 0)
         {
-            Author = _context.Authors.ToList().FirstOrDefault(x => x.Id == AuthorId);
+            Author = await _context.Authors.FindAsync(AuthorId);
             ButtonText = "Edit";
         }
     }
