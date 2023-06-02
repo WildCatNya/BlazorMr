@@ -1,4 +1,5 @@
-﻿@page "/paging"
+﻿@*@page "/paging"*@
+@page "/"
 
 @using Microsoft.EntityFrameworkCore
 
@@ -16,6 +17,14 @@ else if (Videos.Count == 0)
 }
 else
 {
+    <select class="mb-3" @onchange="OnChange">
+        <option value="0">Все (@Authors.Sum(x => x.Videos.Count))</option>
+        @foreach (var author in Authors.OrderBy(x => x.Name))
+        {
+            <option value="@author.Id">@author.Name (@author.Videos.Count)</option>
+        }
+    </select>
+
     <PaginatedListComp Source="Videos" PageSize="6" />
 }
 
@@ -23,11 +32,26 @@ else
     private MediaContext _context;
 
     private List<Video>? Videos;
+    private List<Author>? Authors;
 
     protected override async Task OnInitializedAsync()
     {
         _context = await DbFactory.CreateDbContextAsync();
 
         Videos = await _context.Videos.Include(x => x.TimeCodes).Include(x => x.IdAuthorNavigation).ToListAsync();
+
+        Authors = await _context.Authors.ToListAsync();
+    }
+
+    private void OnChange(ChangeEventArgs e)
+    {
+        int id = e.Value.ToString().ToInt32();
+
+        if (id == 0)
+        {
+            Videos = _context.Videos.Include(x => x.TimeCodes).Include(x => x.IdAuthorNavigation).ToList();
+            return;
+        }
+        Videos = _context.Videos.Include(x => x.TimeCodes).Include(x => x.IdAuthorNavigation).ToList().Where(x => x.IdAuthor == id).ToList();
     }
 }
