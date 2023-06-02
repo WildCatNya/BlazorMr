@@ -80,7 +80,6 @@ else
 
 @code {
     private MediaContext _context;
-    //private PreviewManager PreviewManager;
 
     private List<Video>? Videos;
 
@@ -106,6 +105,7 @@ else
         if (confirmed)
         {
             PreviewManager.Download(video);
+            await JsRuntime.InvokeVoidAsync("alert", "Скачивание закончено");
             NavigationManager.NavigateTo("preview");
         }
     }
@@ -115,6 +115,7 @@ else
         if (confirmed)
         {
             PreviewManager.Download(video, resolution);
+            await JsRuntime.InvokeVoidAsync("alert", "Скачивание закончено");
             NavigationManager.NavigateTo("preview");
         }
     }
