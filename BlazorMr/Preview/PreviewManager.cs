@@ -1,7 +1,4 @@
-﻿using Azure;
-using BlazorMr.Database.Entities;
-using Org.BouncyCastle.Tsp;
-using System.Net;
+﻿using BlazorMr.Database.Entities;
 
 namespace BlazorMr.Preview;
 
@@ -48,17 +45,13 @@ public class PreviewManager : IPreviewManager
 
     private async void Download(Video video, PreviewResolution resolution, HttpResponseMessage response)
     {
-        using (var fileStream = await response.Content.ReadAsStreamAsync())
-        {
-            // Specify the path and filename for saving the downloaded file
-            string filePath = "C:\\path\\to\\save\\file.txt";
+        using var fileStream = await response.Content.ReadAsStreamAsync();
 
-            using (var outputStream = new FileStream(filePath, FileMode.Create))
-            {
-                // Copy the content from the response stream to the file stream
-                await fileStream.CopyToAsync(outputStream);
-            }
-        }
+        string filePath = $@"{_imagesPath}\{video.Id}.jpg";
+
+        using var outputStream = new FileStream(filePath, FileMode.Create);
+
+        await fileStream.CopyToAsync(outputStream);
     }
 
     public string GetHrefByRes(Video video, PreviewResolution resolution)
