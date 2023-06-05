@@ -27,7 +27,7 @@ public class PreviewManager : IPreviewManager
 
             if (response.IsSuccessStatusCode)
             {
-                Download(video, resolution, response);
+                Download(video, response);
                 return;
             }
         }
@@ -39,11 +39,11 @@ public class PreviewManager : IPreviewManager
 
         if (response.IsSuccessStatusCode)
         {
-            Download(video, resolution, response);
+            Download(video, response);
         }
     }
 
-    private async void Download(Video video, PreviewResolution resolution, HttpResponseMessage response)
+    private async void Download(Video video, HttpResponseMessage response)
     {
         using var fileStream = await response.Content.ReadAsStreamAsync();
 
