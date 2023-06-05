@@ -12,7 +12,7 @@ public class Video : Entity
 
     public bool IncognitoAccess { get; set; }
 
-    public virtual Author IdAuthorNavigation { get; set; } = null!;
+    public Author IdAuthorNavigation { get; set; } = null!;
 
-    public virtual ICollection<TimeCode> TimeCodes { get; } = new List<TimeCode>();
+    public ICollection<TimeCode> TimeCodes { get; } = new List<TimeCode>();
 }

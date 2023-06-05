@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace BlazorMr.Database;
 
-public partial class MediaContext : DbContext
+public class MediaContext : DbContext
 {
     public const string ConnectionStringName = "MediaConnection";
 
@@ -13,11 +13,11 @@ public partial class MediaContext : DbContext
         Database.EnsureCreated();
     }
 
-    public virtual DbSet<Author> Authors { get; set; }
+    public DbSet<Author> Authors { get; set; }
 
-    public virtual DbSet<TimeCode> TimeCodes { get; set; }
+    public DbSet<TimeCode> TimeCodes { get; set; }
 
-    public virtual DbSet<Video> Videos { get; set; }
+    public DbSet<Video> Videos { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
         => modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());

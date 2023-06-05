@@ -14,5 +14,5 @@ public class TimeCode : Entity
 
     public string EndModified => TimeCodeTranslitter.Translit(End);
 
-    public virtual Video IdVideoNavigation { get; set; } = null!;
+    public Video IdVideoNavigation { get; set; } = null!;
 }

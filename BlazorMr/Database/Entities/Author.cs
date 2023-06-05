@@ -8,5 +8,5 @@ public class Author : Entity
 
     public string Href { get; set; } = null!;
 
-    public virtual ICollection<Video> Videos { get; } = new List<Video>();
+    public ICollection<Video> Videos { get; } = new List<Video>();
 }
