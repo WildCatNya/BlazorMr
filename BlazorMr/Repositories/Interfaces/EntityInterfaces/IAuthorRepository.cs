@@ -2,4 +2,4 @@
 
 namespace BlazorMr.Repositories.Interfaces.EntityInterfaces;
 
-public interface IAuthorRepository { }
+public interface IAuthorRepository : IRepository<Author> { }

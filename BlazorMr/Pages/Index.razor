@@ -4,7 +4,6 @@
 @using Microsoft.EntityFrameworkCore
 
 @inject IDbContextFactory<MediaContext> DbFactory
-@inject IJSRuntime JsRuntime
 
 @if (Videos is null)
 {
@@ -35,25 +34,29 @@ else
 }
 
 @code {
-    private MediaContext _context;
+    private UnitOfWork _unitOfWork;
+
     private List<Video>? Videos;
     private List<Author>? Authors;
 
     protected override async Task OnInitializedAsync()
     {
-        _context = await DbFactory.CreateDbContextAsync();
+        _unitOfWork = new(await DbFactory.CreateDbContextAsync());
 
-        Videos = await _context.Videos.Include(x => x.TimeCodes).Include(x => x.IdAuthorNavigation).ToListAsync();
-        Authors = await _context.Authors.ToListAsync();
+        Videos = await _unitOfWork.Video.GetAllWithIncludesAsync();
+
+        Authors = await _unitOfWork.Author.GetAllAsync();
     }
     private void OnChange(ChangeEventArgs e)
     {
         int id = e.Value.ToString().ToInt32();
+
         if (id == 0)
         {
-            Videos = _context.Videos.Include(x => x.TimeCodes).Include(x => x.IdAuthorNavigation).ToList();
+            Videos = _unitOfWork.Video.GetAllWithIncludes();
             return;
         }
-        Videos = _context.Videos.Include(x => x.TimeCodes).Include(x => x.IdAuthorNavigation).ToList().Where(x => x.IdAuthor == id).ToList();
+
+        Videos = _unitOfWork.Video.GetAllWithIncludes().Where(x => x.IdAuthor == id).ToList();
     }
 }
