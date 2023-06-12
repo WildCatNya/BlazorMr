@@ -11,6 +11,8 @@ public class UnitOfWork : IUnitOfWork, IDisposable
 
     public IAuthorRepository Author { get; }
 
+    public ITimeCodeRepository TimeCode { get; }
+
     public IVideoRepository Video { get; }
 
     public UnitOfWork(MediaContext context)
@@ -18,6 +20,8 @@ public class UnitOfWork : IUnitOfWork, IDisposable
         _context = context;
 
         Author = new AuthorRepository(context);
+
+        TimeCode = new TimeCodeRepository(context);
 
         Video = new VideoRepository(context);
     }

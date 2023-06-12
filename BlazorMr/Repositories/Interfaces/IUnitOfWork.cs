@@ -6,6 +6,8 @@ public interface IUnitOfWork
 {
     public IAuthorRepository Author { get; }
 
+    public ITimeCodeRepository TimeCode { get; }
+
     public IVideoRepository Video { get; }
 
     public int SaveChanges();
