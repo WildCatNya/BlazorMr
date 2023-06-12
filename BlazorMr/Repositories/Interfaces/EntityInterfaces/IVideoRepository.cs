@@ -2,4 +2,9 @@
 
 namespace BlazorMr.Repositories.Interfaces.EntityInterfaces;
 
-public interface IVideoRepository : IRepository<Video> { }
+public interface IVideoRepository
+{
+    public List<Video> GetAllWithIncludes();
+
+    public Task<List<Video>> GetAllWithIncludesAsync();
+}

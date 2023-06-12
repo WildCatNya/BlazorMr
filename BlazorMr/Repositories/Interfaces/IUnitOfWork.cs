@@ -7,4 +7,8 @@ public interface IUnitOfWork
     public IAuthorRepository Author { get; }
 
     public IVideoRepository Video { get; }
+
+    public int SaveChanges();
+
+    public Task<int> SaveChangesAsync();
 }

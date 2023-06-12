@@ -2,9 +2,13 @@
 
 public interface IRepository<TEntity> where TEntity : class
 {
-    public Task<TEntity?> Get(int id);
+    public TEntity? GetById(int id);
 
-    public Task<List<TEntity>> GetAll();
+    public Task<TEntity?> GetByIdAsync(int id);
+
+    public List<TEntity> GetAll();
+
+    public Task<List<TEntity>> GetAllAsync();
 
     public void Create(TEntity entity);
 

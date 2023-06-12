@@ -22,8 +22,26 @@ public class UnitOfWork : IUnitOfWork, IDisposable
         Video = new VideoRepository(context);
     }
 
+    public int SaveChanges() => _context.SaveChanges();
+
+    public async Task<int> SaveChangesAsync() =>
+        await _context.SaveChangesAsync();
+
+    private bool _disposed = false;
+
+    private void Dispose(bool disposing)
+    {
+        if (!_disposed)
+        {
+            if (disposing)
+                _context.Dispose();
+        }
+        _disposed = true;
+    }
+
     public void Dispose()
     {
-        throw new NotImplementedException();
+        Dispose(true);
+        GC.SuppressFinalize(this);
     }
 }

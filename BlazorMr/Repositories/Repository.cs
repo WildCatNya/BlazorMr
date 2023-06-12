@@ -13,20 +13,26 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
         Context = context;
     }
 
-    public void Create(TEntity entity)
+    protected DbSet<TEntity> Entity => Context.Set<TEntity>();
+
+    public void Create(TEntity entity) => Entity.Add(entity);
+
+    public TEntity? GetById(int id) => Entity.Find(id);
+        
+    public async Task<TEntity?> GetByIdAsync(int id) =>
+        await Entity.FindAsync(id);
+
+    public List<TEntity> GetAll() => Entity.ToList();
+
+    public async Task<List<TEntity>> GetAllAsync() =>
+        await Entity.ToListAsync();
+
+    public async void Remove(int id)
     {
-        throw new NotImplementedException();
-    }
+        TEntity? entity = await GetByIdAsync(id);
 
-    public async Task<TEntity?> Get(int id) =>
-        await Context.Set<TEntity>().FindAsync(id);
-
-    public async Task<List<TEntity>> GetAll() =>
-        await Context.Set<TEntity>().ToListAsync();
-
-    public void Remove(int id)
-    {
-        throw new NotImplementedException();
+        if (entity is not null)
+            Entity.Remove(entity);
     }
 
     public void Remove(TEntity entity)
