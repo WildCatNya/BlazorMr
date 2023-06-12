@@ -2,37 +2,40 @@
 
 @using Microsoft.EntityFrameworkCore
 
-@inject IDbContextFactory<MediaContext> DbFactory
+@inject IUnitOfWork Unit
 @inject NavigationManager NavigationManager
 
-<h3>Удалить?</h3>
+@if (Author is not null)
+{
+    <h3>Удалить?</h3>
 
-<EditForm Model="@Author" OnValidSubmit="Delete">
-    <p>Name: <strong>@Author.Name</strong></p>
-    <p>Href: <strong>@Author.Href</strong></p>
+    <EditForm Model="@Author" OnValidSubmit="Delete">
+        <p>Name: <strong>@Author.Name</strong></p>
+        <p>Href: <strong>@Author.Href</strong></p>
 
-    <button type="submit" class="btn btn-danger">Удалить</button>
-    <a href="/author" class="btn btn-secondary">Назад</a>
-</EditForm>
+        <button type="submit" class="btn btn-danger">Удалить</button>
+        <a href="/author" class="btn btn-secondary">Назад</a>
+    </EditForm>
+}
+else
+{
+    <p>Ага)</p>
+}
 
 @code {
     [Parameter] public int AuthorId { get; set; }
 
-    private MediaContext _context;
-
     protected override async Task OnInitializedAsync()
     {
-        _context = await DbFactory.CreateDbContextAsync();
-
-        Author = _context.Authors.ToList().FirstOrDefault(x => x.Id == AuthorId);
+        Author = Unit.Author.GetById(AuthorId);
     }
 
-    private Author Author = new();
+    private Author? Author;
 
     private async Task Delete()
     {
-        _context.Authors.Remove(Author);
-        await _context.SaveChangesAsync();
+        Unit.Author.Remove(Author);
+        await Unit.SaveChangesAsync();
         NavigationManager.NavigateTo("author");
     }
 }

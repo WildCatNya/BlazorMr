@@ -3,7 +3,7 @@
 
 @using Microsoft.EntityFrameworkCore
 
-@inject IDbContextFactory<MediaContext> DbFactory
+@inject IUnitOfWork Unit
 @inject NavigationManager NavigationManager
 
 <EditForm Model="@Author" OnValidSubmit="Save">
@@ -33,32 +33,28 @@
 @code {
     [Parameter] public int AuthorId { get; set; }
 
-    private MediaContext _context;
-
     protected override async Task OnInitializedAsync()
     {
-        _context = await DbFactory.CreateDbContextAsync();
-
         if (AuthorId != 0)
         {
-            Author = await _context.Authors.FindAsync(AuthorId);
+            Author = await Unit.Author.GetByIdAsync(AuthorId);
             ButtonText = "Edit";
         }
     }
-    private Author Author = new();
+    private Author? Author = new();
     private string ButtonText = "Create";
 
     private async Task Save()
     {
         if (AuthorId == 0)
         {
-            _context.Authors.Add(Author);
+            Unit.Author.Create(Author);
         }
         else
         {
-            _context.Entry(Author).State = EntityState.Modified;
+            Unit.Author.Update(Author);
         }
-        await _context.SaveChangesAsync();
+        await Unit.SaveChangesAsync();
         NavigationManager.NavigateTo("author");
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace BlazorMr.Repositories.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace BlazorMr.Repositories.Interfaces;
 
 public interface IRepository<TEntity> where TEntity : class
 {
@@ -15,4 +17,6 @@ public interface IRepository<TEntity> where TEntity : class
     public void Remove(int id);
 
     public void Remove(TEntity entity);
+
+    public void Update(TEntity entity);
 }

@@ -1,5 +1,7 @@
 using BlazorMr.Database;
 using BlazorMr.Preview;
+using BlazorMr.Repositories;
+using BlazorMr.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace BlazorMr;
@@ -19,6 +21,8 @@ public class Program
                 builder.Configuration.GetConnectionString(MediaContext.ConnectionStringName)));
 
         builder.Services.AddScoped<IPreviewManager, PreviewManager>();
+
+        builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         var app = builder.Build();
 

@@ -15,28 +15,29 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
 
     protected DbSet<TEntity> Entity => Context.Set<TEntity>();
 
-    public void Create(TEntity entity) => Entity.Add(entity);
+    public virtual void Create(TEntity entity) => Entity.Add(entity);
 
-    public TEntity? GetById(int id) => Entity.Find(id);
+    public virtual TEntity? GetById(int id) => Entity.Find(id);
         
-    public async Task<TEntity?> GetByIdAsync(int id) =>
-        await Entity.FindAsync(id);
+    public virtual async Task<TEntity?> GetByIdAsync(int id) => await Entity.FindAsync(id);
 
-    public List<TEntity> GetAll() => Entity.ToList();
+    public virtual List<TEntity> GetAll() => Entity.ToList();
 
-    public async Task<List<TEntity>> GetAllAsync() =>
-        await Entity.ToListAsync();
+    public virtual async Task<List<TEntity>> GetAllAsync() => await Entity.ToListAsync();
 
-    public async void Remove(int id)
+    public virtual void Remove(int id)
     {
-        TEntity? entity = await GetByIdAsync(id);
+        TEntity? entity = GetById(id);
 
         if (entity is not null)
             Entity.Remove(entity);
     }
 
-    public void Remove(TEntity entity)
+    public virtual void Remove(TEntity entity)
     {
         throw new NotImplementedException();
     }
+
+    public virtual void Update(TEntity entity) =>
+        Context.Entry(entity).State = EntityState.Modified;
 }
