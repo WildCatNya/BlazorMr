@@ -13,7 +13,7 @@
         <div>
             <InputSelect @bind-Value="@Video.IdAuthor">
                 <option value="0">---</option>
-                @foreach (var author in Authors)
+                @foreach (var author in Authors.OrderBy(x => x.Name))
                 {
                     <option value="@author.Id">@author.Name</option>
                 }
