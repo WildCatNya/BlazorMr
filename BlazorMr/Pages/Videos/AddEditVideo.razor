@@ -1,9 +1,7 @@
 ﻿@page "/video/add"
 @page "/video/edit/{VideoId:int}"
 
-@using Microsoft.EntityFrameworkCore
-
-@inject IDbContextFactory<MediaContext> DbFactory
+@inject IUnitOfWork Unit
 @inject NavigationManager NavigationManager
 
 <EditForm Model="@Video" OnValidSubmit="Save">
@@ -52,22 +50,18 @@
 @code {
     [Parameter] public int VideoId { get; set; }
 
-    private MediaContext _context;
-
-    private Video Video = new();
+    private Video? Video = new();
 
     private List<Author> Authors;
 
     protected override async Task OnInitializedAsync()
     {
-        _context = await DbFactory.CreateDbContextAsync();
-
         if (VideoId != 0)
         {
-            Video = _context.Videos.ToList().FirstOrDefault(x => x.Id == VideoId);
+            Video = Unit.VideoRepository.GetById(VideoId);
             ButtonText = "Edit";
         }
-        Authors = _context.Authors.ToList();
+        Authors = Unit.AuthorRepository.GetAll(true);
     }
 
     private string ButtonText = "Create";
@@ -76,13 +70,13 @@
     {
         if (VideoId == 0)
         {
-            _context.Videos.Add(Video);
+            Unit.VideoRepository.Create(Video);
         }
         else
         {
-            _context.Entry(Video).State = EntityState.Modified;
+            Unit.VideoRepository.Update(Video);
         }
-        await _context.SaveChangesAsync();
+        await Unit.SaveChangesAsync();
         NavigationManager.NavigateTo("video");
     }
 }

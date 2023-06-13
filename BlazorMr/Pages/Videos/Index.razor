@@ -1,8 +1,6 @@
 ﻿@page "/video"
 
-@using Microsoft.EntityFrameworkCore
-
-@inject IDbContextFactory<MediaContext> DbFactory
+@inject IUnitOfWork Unit
 
 <a href="/video/add" class="btn btn-primary mb-4">Добавить</a>
 
@@ -50,14 +48,10 @@ else
 }
 
 @code {
-    private MediaContext _context;
-
     private List<Video>? Videos;
 
     protected override async Task OnInitializedAsync()
     {
-        _context = await DbFactory.CreateDbContextAsync();
-
-        Videos = await _context.Videos.Include(x => x.IdAuthorNavigation).ToListAsync();
+        Videos = await Unit.VideoRepository.GetAllWithIncludesAsync(true);
     }
 }

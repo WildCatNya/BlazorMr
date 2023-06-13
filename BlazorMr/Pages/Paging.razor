@@ -1,9 +1,7 @@
 ﻿@*@page "/paging"*@
 @page "/"
 
-@using Microsoft.EntityFrameworkCore
-
-@inject IDbContextFactory<MediaContext> DbFactory
+@inject IUnitOfWork Unit
 @inject IJSRuntime JsRuntime
 @inject NavigationManager NavigationManager
 
@@ -29,18 +27,15 @@ else
 }
 
 @code {
-    private MediaContext _context;
-
     private List<Video>? Videos;
+
     private List<Author>? Authors;
 
     protected override async Task OnInitializedAsync()
     {
-        _context = await DbFactory.CreateDbContextAsync();
+        Videos = await Unit.VideoRepository.GetAllWithIncludesAsync(true);
 
-        Videos = await _context.Videos.Include(x => x.TimeCodes).Include(x => x.IdAuthorNavigation).ToListAsync();
-
-        Authors = await _context.Authors.ToListAsync();
+        Authors = await Unit.AuthorRepository.GetAllAsync(true);
     }
 
     private void OnChange(ChangeEventArgs e)
@@ -49,9 +44,10 @@ else
 
         if (id == 0)
         {
-            Videos = _context.Videos.Include(x => x.TimeCodes).Include(x => x.IdAuthorNavigation).ToList();
+            Videos = Unit.VideoRepository.GetAll(true);
             return;
         }
-        Videos = _context.Videos.Include(x => x.TimeCodes).Include(x => x.IdAuthorNavigation).ToList().Where(x => x.IdAuthor == id).ToList();
+
+        Videos = Unit.VideoRepository.FindWithIncludes(x => x.IdAuthor == id, true);
     }
 }

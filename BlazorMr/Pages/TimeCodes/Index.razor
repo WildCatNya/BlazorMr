@@ -46,6 +46,6 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        TimeCodes = await Unit.TimeCodeRepository.GetAllAsync();
+        TimeCodes = await Unit.TimeCodeRepository.GetAllAsync(true);
     }
 }
