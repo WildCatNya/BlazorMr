@@ -27,14 +27,14 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        Author = Unit.Author.GetById(AuthorId);
+        Author = Unit.AuthorRepository.GetById(AuthorId);
     }
 
     private Author? Author;
 
     private async Task Delete()
     {
-        Unit.Author.Remove(Author);
+        Unit.AuthorRepository.Remove(Author);
         await Unit.SaveChangesAsync();
         NavigationManager.NavigateTo("author");
     }

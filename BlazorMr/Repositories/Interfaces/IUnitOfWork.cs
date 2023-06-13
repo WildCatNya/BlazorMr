@@ -4,11 +4,11 @@ namespace BlazorMr.Repositories.Interfaces;
 
 public interface IUnitOfWork
 {
-    public IAuthorRepository Author { get; }
+    public IAuthorRepository AuthorRepository { get; }
 
-    public ITimeCodeRepository TimeCode { get; }
+    public ITimeCodeRepository TimeCodeRepository { get; }
 
-    public IVideoRepository Video { get; }
+    public IVideoRepository VideoRepository { get; }
 
     public int SaveChanges();
 

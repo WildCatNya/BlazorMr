@@ -2,9 +2,7 @@
 @page "/timecode/edit/{TimeCodeId:int}"
 @page "/timecode/add/{VideoId:int}"
 
-@using Microsoft.EntityFrameworkCore
-
-@inject IDbContextFactory<MediaContext> DbFactory
+@inject IUnitOfWork Unit
 @inject NavigationManager NavigationManager
 
 <EditForm Model="@TimeCode" OnValidSubmit="Save">
@@ -49,41 +47,37 @@
 
     [Parameter] public int VideoId { get; set; }
 
-    private MediaContext _context;
-
-    private TimeCode TimeCode = new();
+    private TimeCode? TimeCode = new();
 
     private List<Video> Videos;
 
     protected override async Task OnInitializedAsync()
     {
-        _context = await DbFactory.CreateDbContextAsync();
-
         if (TimeCodeId != 0)
         {
-            TimeCode = _context.TimeCodes.ToList().FirstOrDefault(x => x.Id == TimeCodeId);
+            TimeCode = Unit.TimeCodeRepository.GetById(TimeCodeId);
             ButtonText = "Edit";
         }
         if (VideoId != 0)
         {
             TimeCode.IdVideo = VideoId;
         }
-        Videos = _context.Videos.ToList();
+        Videos = Unit.VideoRepository.GetAll();
     }
-  
+
     private string ButtonText = "Create";
 
     private async Task Save()
     {
         if (TimeCodeId == 0)
         {
-            _context.TimeCodes.Add(TimeCode);
+            Unit.TimeCodeRepository.Create(TimeCode);
         }
         else
         {
-            _context.Entry(TimeCode).State = EntityState.Modified;
+            Unit.TimeCodeRepository.Update(TimeCode);
         }
-        await _context.SaveChangesAsync();
+        await Unit.SaveChangesAsync();
         NavigationManager.NavigateTo("timecode");
     }
 }

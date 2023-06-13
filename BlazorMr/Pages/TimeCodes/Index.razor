@@ -1,8 +1,6 @@
 ﻿@page "/timecode"
 
-@using Microsoft.EntityFrameworkCore
-
-@inject IDbContextFactory<MediaContext> DbFactory
+@inject IUnitOfWork Unit
 
 <a href="/timecode/add" class="btn btn-primary mb-4">Добавить</a>
 
@@ -44,14 +42,10 @@ else
 }
 
 @code {
-    private MediaContext _context;
-
     private List<TimeCode> TimeCodes;
 
     protected override async Task OnInitializedAsync()
     {
-        _context = await DbFactory.CreateDbContextAsync();
-
-        TimeCodes = await _context.TimeCodes.ToListAsync();
+        TimeCodes = await Unit.TimeCodeRepository.GetAllAsync();
     }
 }

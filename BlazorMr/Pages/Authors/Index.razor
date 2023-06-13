@@ -46,6 +46,6 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        Authors = await Unit.Author.GetAllAsync();
+        Authors = await Unit.AuthorRepository.GetAllAsync();
     }
 }

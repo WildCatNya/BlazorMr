@@ -37,7 +37,7 @@
     {
         if (AuthorId != 0)
         {
-            Author = await Unit.Author.GetByIdAsync(AuthorId);
+            Author = await Unit.AuthorRepository.GetByIdAsync(AuthorId);
             ButtonText = "Edit";
         }
     }
@@ -48,11 +48,11 @@
     {
         if (AuthorId == 0)
         {
-            Unit.Author.Create(Author);
+            Unit.AuthorRepository.Create(Author);
         }
         else
         {
-            Unit.Author.Update(Author);
+            Unit.AuthorRepository.Update(Author);
         }
         await Unit.SaveChangesAsync();
         NavigationManager.NavigateTo("author");

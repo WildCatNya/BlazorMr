@@ -1,9 +1,7 @@
 ﻿@*@page "/"*@
 @page "/oldindex"
 
-@using Microsoft.EntityFrameworkCore
-
-@inject IDbContextFactory<MediaContext> DbFactory
+@inject IUnitOfWork Unit
 
 @if (Videos is null)
 {
@@ -34,18 +32,14 @@ else
 }
 
 @code {
-    private UnitOfWork _unitOfWork;
-
     private List<Video>? Videos;
     private List<Author>? Authors;
 
     protected override async Task OnInitializedAsync()
     {
-        _unitOfWork = new(await DbFactory.CreateDbContextAsync());
+        Videos = await Unit.VideoRepository.GetAllWithIncludesAsync();
 
-        Videos = await _unitOfWork.Video.GetAllWithIncludesAsync();
-
-        Authors = await _unitOfWork.Author.GetAllAsync();
+        Authors = await Unit.AuthorRepository.GetAllAsync();
     }
     private void OnChange(ChangeEventArgs e)
     {
@@ -53,10 +47,10 @@ else
 
         if (id == 0)
         {
-            Videos = _unitOfWork.Video.GetAllWithIncludes();
+            Videos = Unit.VideoRepository.GetAllWithIncludes();
             return;
         }
 
-        Videos = _unitOfWork.Video.GetAllWithIncludes().Where(x => x.IdAuthor == id).ToList();
+        Videos = Unit.VideoRepository.GetAllWithIncludes().Where(x => x.IdAuthor == id).ToList();
     }
 }

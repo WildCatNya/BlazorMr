@@ -9,21 +9,21 @@ public class UnitOfWork : IUnitOfWork, IDisposable
 {
     private readonly MediaContext _context;
 
-    public IAuthorRepository Author { get; }
+    public IAuthorRepository AuthorRepository { get; }
 
-    public ITimeCodeRepository TimeCode { get; }
+    public ITimeCodeRepository TimeCodeRepository { get; }
 
-    public IVideoRepository Video { get; }
+    public IVideoRepository VideoRepository { get; }
 
     public UnitOfWork(MediaContext context)
     {
         _context = context;
 
-        Author = new AuthorRepository(context);
+        AuthorRepository = new AuthorRepository(context);
 
-        TimeCode = new TimeCodeRepository(context);
+        TimeCodeRepository = new TimeCodeRepository(context);
 
-        Video = new VideoRepository(context);
+        VideoRepository = new VideoRepository(context);
     }
 
     public int SaveChanges() => _context.SaveChanges();
