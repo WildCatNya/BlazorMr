@@ -25,7 +25,9 @@ else
         }
     </select>
 
-    <PaginatedListComp Source="Videos" PageSize="6" />
+    <input class="ms-3" type="number" @bind-value="PageSize" />
+
+    <PaginatedListComp Source="Videos" PageSize="PageSize" />
 }
 
 @code {
@@ -33,6 +35,7 @@ else
 
     private List<Video>? Videos;
     private List<Author>? Authors;
+    private int PageSize;
 
     protected override async Task OnInitializedAsync()
     {
@@ -41,6 +44,8 @@ else
         Videos = await _context.Videos.Include(x => x.TimeCodes).Include(x => x.IdAuthorNavigation).ToListAsync();
 
         Authors = await _context.Authors.ToListAsync();
+
+        PageSize = Videos.Count / 3;
     }
 
     private void OnChange(ChangeEventArgs e)
