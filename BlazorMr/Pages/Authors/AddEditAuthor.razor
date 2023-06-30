@@ -6,47 +6,53 @@
 @inject IDbContextFactory<MediaContext> DbFactory
 @inject NavigationManager NavigationManager
 
-<EditForm Model="@Author" OnValidSubmit="Save">
-    <DataAnnotationsValidator />
-    <div class="form-group">
-        <label>Name: </label>
-        <div>
-            <InputText @bind-Value="@Author.Name" />
-            <ValidationMessage For="@(() => Author.Name)" />
+@if (Author is null)
+{
+    <p><em>Такого автора нет</em></p>
+}
+else
+{
+    <EditForm Model="@Author" OnValidSubmit="Save">
+        <DataAnnotationsValidator />
+        <div class="form-group">
+            <label>Name: </label>
+            <div>
+                <InputText @bind-Value="@Author.Name" />
+                <ValidationMessage For="@(() => Author.Name)" />
+            </div>
         </div>
-    </div>
-    <div class="form-group mt-3">
-        <label>Href: </label>
-        <div>
-            <InputText @bind-Value="@Author.Href" />
-            <ValidationMessage For="@(() => Author.Href)" />
+        <div class="form-group mt-3">
+            <label>Href: </label>
+            <div>
+                <InputText @bind-Value="@Author.Href" />
+                <ValidationMessage For="@(() => Author.Href)" />
+            </div>
         </div>
-    </div>
-    <div class="form-group mt-3">
-        <button class="btn btn-primary" type="submit">
-            @ButtonText
-        </button>
-        <a href="/author" class="btn btn-secondary">Назад</a>
-    </div>
-</EditForm>
+        <div class="form-group mt-3">
+            <button class="btn btn-primary" type="submit">
+                @(AuthorId == 0 ? "Create" : "Edit")
+            </button>
+            <a href="/author" class="btn btn-secondary">Назад</a>
+        </div>
+    </EditForm>
+}
 
 @code {
     [Parameter] public int AuthorId { get; set; }
 
     private MediaContext _context;
 
+    private Author? Author;
+
     protected override async Task OnInitializedAsync()
     {
         _context = await DbFactory.CreateDbContextAsync();
-
-        if (AuthorId != 0)
-        {
-            Author = await _context.Authors.FindAsync(AuthorId);
-            ButtonText = "Edit";
-        }
     }
-    private Author Author = new();
-    private string ButtonText = "Create";
+
+    protected override async Task OnParametersSetAsync()
+    {
+        Author = AuthorId == 0 ? new() : await _context.Authors.FindAsync(AuthorId);
+    }
 
     private async Task Save()
     {
@@ -58,7 +64,9 @@
         {
             _context.Entry(Author).State = EntityState.Modified;
         }
+
         await _context.SaveChangesAsync();
+
         NavigationManager.NavigateTo("author");
     }
 }
