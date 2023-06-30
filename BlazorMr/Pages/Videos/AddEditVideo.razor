@@ -6,71 +6,84 @@
 @inject IDbContextFactory<MediaContext> DbFactory
 @inject NavigationManager NavigationManager
 
-<EditForm Model="@Video" OnValidSubmit="Save">
-    <DataAnnotationsValidator />
-    <div class="form-group">
-        <label>Author: </label>
-        <div>
-            <InputSelect @bind-Value="@Video.IdAuthor">
-                <option value="0">---</option>
-                @foreach (var author in Authors.OrderBy(x => x.Name))
-                {
-                    <option value="@author.Id">@author.Name</option>
-                }
-            </InputSelect>
+@if (Video is null)
+{
+    <p><em>Такого видео нет</em></p>
+}
+else if (Authors is null)
+{
+    <p><em>Идет загрузка</em></p>
+}
+else if (Authors.Count == 0)
+{
+    <p><em>Авторов нет</em></p>
+}
+else
+{
+    <EditForm Model="@Video" OnValidSubmit="Save">
+        <DataAnnotationsValidator />
+        <div class="form-group">
+            <label>Author: </label>
+            <div>
+                <InputSelect @bind-Value="@Video.IdAuthor">
+                    <option value="0">---</option>
+                    @foreach (var author in Authors.OrderBy(x => x.Name))
+                    {
+                        <option value="@author.Id">@author.Name</option>
+                    }
+                </InputSelect>
+            </div>
         </div>
-    </div>
-    <div class="form-group mt-3">
-        <label>Name: </label>
-        <div>
-            <InputText @bind-Value="@Video.Title" />
-            <ValidationMessage For="@(() => Video.Title)" />
+        <div class="form-group mt-3">
+            <label>Name: </label>
+            <div>
+                <InputText @bind-Value="@Video.Title" />
+                <ValidationMessage For="@(() => Video.Title)" />
+            </div>
         </div>
-    </div>
-    <div class="form-group mt-3">
-        <label>Href: </label>
-        <div>
-            <InputText @bind-Value="@Video.Href" />
-            <ValidationMessage For="@(() => Video.Href)" />
+        <div class="form-group mt-3">
+            <label>Href: </label>
+            <div>
+                <InputText @bind-Value="@Video.Href" />
+                <ValidationMessage For="@(() => Video.Href)" />
+            </div>
         </div>
-    </div>
-    <div class="form-group mt-3">
-        <label>Incognito Access: </label>
-        <div>
-            <InputCheckbox @bind-Value="@Video.IncognitoAccess" />
-            <ValidationMessage For="@(() => Video.Title)" />
+        <div class="form-group mt-3">
+            <label>Incognito Access: </label>
+            <div>
+                <InputCheckbox @bind-Value="@Video.IncognitoAccess" />
+                <ValidationMessage For="@(() => Video.Title)" />
+            </div>
         </div>
-    </div>
-    <div class="form-group mt-3">
-        <button class="btn btn-primary" type="submit">
-            @ButtonText
-        </button>
-        <a href="/video" class="btn btn-secondary">Назад</a>
-    </div>
-</EditForm>
+        <div class="form-group mt-3">
+            <button class="btn btn-primary" type="submit">
+                @(VideoId == 0 ? "Create" : "Edit")
+            </button>
+            <a href="/video" class="btn btn-secondary">Назад</a>
+        </div>
+    </EditForm>
+}
 
 @code {
     [Parameter] public int VideoId { get; set; }
 
     private MediaContext _context;
 
-    private Video Video = new();
+    private Video? Video;
 
-    private List<Author> Authors;
+    private List<Author>? Authors;
 
     protected override async Task OnInitializedAsync()
     {
         _context = await DbFactory.CreateDbContextAsync();
-
-        if (VideoId != 0)
-        {
-            Video = _context.Videos.ToList().FirstOrDefault(x => x.Id == VideoId);
-            ButtonText = "Edit";
-        }
-        Authors = _context.Authors.ToList();
     }
 
-    private string ButtonText = "Create";
+    protected override async Task OnParametersSetAsync()
+    {
+        Video = VideoId == 0 ? new() : await _context.Videos.FindAsync(VideoId);
+
+        Authors = await _context.Authors.ToListAsync();
+    }
 
     private async Task Save()
     {
@@ -82,7 +95,9 @@
         {
             _context.Entry(Video).State = EntityState.Modified;
         }
+
         await _context.SaveChangesAsync();
+
         NavigationManager.NavigateTo("video");
     }
 }

@@ -6,54 +6,74 @@
 @inject IPreviewManager PreviewManager
 @inject NavigationManager NavigationManager
 
-<h3>Удалить?</h3>
+@if (Video is null)
+{
+    <p><em>Такого видео нет</em></p>
+}
+else
+{
+    <h3>Удалить?</h3>
 
-<EditForm Model="Video" OnValidSubmit="Delete">
-    <p>Name: <strong>@Video.Title</strong></p>
-    <p>Href: <strong>@Video.Href</strong></p>
+    <EditForm Model="Video" OnValidSubmit="Delete">
+        <p>Name: <strong>@Video.Title</strong></p>
+        <p>Href: <strong>@Video.Href</strong></p>
 
-    @if (Video.TimeCodes.Count > 0)
-    {
-        <p class="h3">Таймкоды:</p>
-
-        @foreach (var timecode in Video.TimeCodes)
+        @if (VideoHasTimeCodes)
         {
-            <p>@timecode.StartModified - @timecode.EndModified</p>
+            <p class="h3">Таймкоды:</p>
+
+            @foreach (var timecode in Video.TimeCodes)
+            {
+                <p>@timecode.StartModified - @timecode.EndModified</p>
+            }
         }
-    }
 
-    @if (PreviewManager.HasPreview(Video))
-    {
-        <p>Удалить превью?</p>
-    }
+        @if (VideoHasPreview)
+        {
+            <p>Удалить превью?</p>
+        }
 
-    <button type="submit" class="btn btn-danger">Удалить</button>
-    <a href="/video" class="btn btn-secondary">Назад</a>
-</EditForm>
+        <button type="submit" class="btn btn-danger">Удалить</button>
+        <a href="/video" class="btn btn-secondary">Назад</a>
+    </EditForm>
+}
 
 @code {
     [Parameter] public int VideoId { get; set; }
 
     private MediaContext _context;
 
-    private Video Video = new();
+    private Video? Video;
+
+    private bool VideoHasTimeCodes, VideoHasPreview;
 
     protected override async Task OnInitializedAsync()
     {
         _context = await DbFactory.CreateDbContextAsync();
+    }
 
-        Video = _context.Videos.Include(x => x.TimeCodes).ToList().FirstOrDefault(x => x.Id == VideoId);
+    protected override async Task OnParametersSetAsync()
+    {
+        Video = await _context.Videos.Include(x => x.TimeCodes).FirstOrDefaultAsync(x => x.Id == VideoId);
+
+        VideoHasTimeCodes = Video?.TimeCodes.Count > 0;
+
+        VideoHasPreview = PreviewManager.HasPreview(Video);
     }
 
     private async Task Delete()
     {
-        foreach (var timecode in Video.TimeCodes)
-        {
-            _context.TimeCodes.Remove(timecode);
-        }
-        PreviewManager.Delete(Video);
+        if (VideoHasTimeCodes)
+            foreach (var timecode in Video.TimeCodes)
+                _context.TimeCodes.Remove(timecode);
+
+        @if (VideoHasPreview)
+            PreviewManager.Delete(Video);
+
         _context.Videos.Remove(Video);
+
         await _context.SaveChangesAsync();
+
         NavigationManager.NavigateTo("video");
     }
 }
