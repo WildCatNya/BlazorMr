@@ -7,42 +7,57 @@
 @inject IDbContextFactory<MediaContext> DbFactory
 @inject NavigationManager NavigationManager
 
-<EditForm Model="@TimeCode" OnValidSubmit="Save">
-    <DataAnnotationsValidator />
-    <div class="form-group">
-        <label>Id Video: </label>
-        <div>
-            <InputSelect @bind-Value="@TimeCode.IdVideo">
-                <option value="0">---</option>
-                @foreach (var video in Videos)
-                {
-                    <option value="@video.Id">@video.Id</option>
-                }
-            </InputSelect>
-            <ValidationMessage For="@(() => TimeCode.IdVideo)" />
+@if (TimeCode is null)
+{
+    <p><em>Такого таймкода нет</em></p>
+}
+else if (Videos is null)
+{
+    <p><em>Идет загрузка</em></p>
+}
+else if (Videos.Count == 0)
+{
+    <p><em>Нет доступных видео</em></p>
+}
+else
+{
+    <EditForm Model="@TimeCode" OnValidSubmit="Save">
+        <DataAnnotationsValidator />
+        <div class="form-group">
+            <label>Id Video: </label>
+            <div>
+                <InputSelect @bind-Value="@TimeCode.IdVideo">
+                    <option value="0">---</option>
+                    @foreach (var video in Videos)
+                    {
+                        <option value="@video.Id">@video.Id</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="@(() => TimeCode.IdVideo)" />
+            </div>
         </div>
-    </div>
-    <div class="form-group mt-3">
-        <label>Start: </label>
-        <div>
-            <InputNumber @bind-Value="@TimeCode.Start" />
-            <ValidationMessage For="@(() => TimeCode.Start)" />
+        <div class="form-group mt-3">
+            <label>Start: </label>
+            <div>
+                <InputNumber @bind-Value="@TimeCode.Start" />
+                <ValidationMessage For="@(() => TimeCode.Start)" />
+            </div>
         </div>
-    </div>
-    <div class="form-group mt-3">
-        <label>Start: </label>
-        <div>
-            <InputNumber @bind-Value="@TimeCode.End" />
-            <ValidationMessage For="@(() => TimeCode.End)" />
+        <div class="form-group mt-3">
+            <label>Start: </label>
+            <div>
+                <InputNumber @bind-Value="@TimeCode.End" />
+                <ValidationMessage For="@(() => TimeCode.End)" />
+            </div>
         </div>
-    </div>
-    <div class="form-group mt-3">
-        <button class="btn btn-primary" type="submit">
-            @ButtonText
-        </button>
-        <a href="/timecode" class="btn btn-secondary">Назад</a>
-    </div>
-</EditForm>
+        <div class="form-group mt-3">
+            <button class="btn btn-primary" type="submit">
+                @(TimeCodeId == 0 ? "Create" : "Edit")
+            </button>
+            <a href="/timecode" class="btn btn-secondary">Назад</a>
+        </div>
+    </EditForm>
+}
 
 @code {
     [Parameter] public int TimeCodeId { get; set; }
@@ -51,27 +66,24 @@
 
     private MediaContext _context;
 
-    private TimeCode TimeCode = new();
+    private TimeCode? TimeCode;
 
     private List<Video> Videos;
 
     protected override async Task OnInitializedAsync()
     {
         _context = await DbFactory.CreateDbContextAsync();
-
-        if (TimeCodeId != 0)
-        {
-            TimeCode = _context.TimeCodes.ToList().FirstOrDefault(x => x.Id == TimeCodeId);
-            ButtonText = "Edit";
-        }
-        if (VideoId != 0)
-        {
-            TimeCode.IdVideo = VideoId;
-        }
-        Videos = _context.Videos.ToList();
     }
-  
-    private string ButtonText = "Create";
+
+    protected override async Task OnParametersSetAsync()
+    {
+        TimeCode = TimeCodeId == 0 ? new() : await _context.TimeCodes.FindAsync(TimeCodeId);
+
+        if (VideoId != 0)
+            TimeCode.IdVideo = VideoId;
+
+        Videos = await _context.Videos.ToListAsync();
+    }
 
     private async Task Save()
     {
@@ -83,7 +95,9 @@
         {
             _context.Entry(TimeCode).State = EntityState.Modified;
         }
+
         await _context.SaveChangesAsync();
+
         NavigationManager.NavigateTo("timecode");
     }
 }

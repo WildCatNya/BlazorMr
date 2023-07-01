@@ -5,35 +5,47 @@
 @inject IDbContextFactory<MediaContext> DbFactory
 @inject NavigationManager NavigationManager
 
-<h3>Удалить?</h3>
+@if (TimeCode is null)
+{
+    <p><em>Такого таймкода нет</em></p>
+}
+else
+{
+    <h3>Удалить?</h3>
 
-<EditForm Model="@TimeCode" OnValidSubmit="Delete">
-    <p>Id Video: <strong>@TimeCode.IdVideo</strong></p>
-    <p>Start: <strong>@TimeCode.Start</strong></p>
-    <p>End: <strong>@TimeCode.End</strong></p>
+    <EditForm Model="@TimeCode" OnValidSubmit="Delete">
+        <p>Id Video: <strong>@TimeCode.IdVideo</strong></p>
+        <p>Start: <strong>@TimeCode.Start</strong></p>
+        <p>End: <strong>@TimeCode.End</strong></p>
 
-    <button type="submit" class="btn btn-danger">Удалить</button>
-    <a href="/timecode" class="btn btn-secondary">Назад</a>
-</EditForm>
+        <button type="submit" class="btn btn-danger">Удалить</button>
+        <a href="/timecode" class="btn btn-secondary">Назад</a>
+    </EditForm>
+}
 
 @code {
     [Parameter] public int TimeCodeId { get; set; }
 
     private MediaContext _context;
 
-    private TimeCode TimeCode = new();
+    private TimeCode? TimeCode;
 
     protected override async Task OnInitializedAsync()
     {
         _context = await DbFactory.CreateDbContextAsync();
+    }
 
-        TimeCode = _context.TimeCodes.ToList().FirstOrDefault(x => x.Id == TimeCodeId);
+    protected override async Task OnParametersSetAsync()
+    {
+        TimeCode = await _context.TimeCodes.FindAsync(TimeCodeId);
     }
 
     private async Task Delete()
     {
         _context.TimeCodes.Remove(TimeCode);
+
         await _context.SaveChangesAsync();
+
         NavigationManager.NavigateTo("timecode");
     }
 }
